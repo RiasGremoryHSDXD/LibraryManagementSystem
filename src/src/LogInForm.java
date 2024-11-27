@@ -16,6 +16,7 @@ public class LogInForm extends JFrame
         frame.setTitle("Library Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(frame_width, frame_height);
+        frame.setResizable(false);
         frame.setVisible(true);
 
         frame.setLayout(new GridBagLayout());
@@ -42,23 +43,7 @@ public class LogInForm extends JFrame
         };
         log_in_panel.setBackground(new Color(0xffde59));
         log_in_panel.setOpaque(false);
-
-        log_in_panel.setPreferredSize(new Dimension((int) (frame_width * 0.3), (int) (frame_height * 0.8)));
-        frame.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e)
-            {
-                int current_frame_width = frame.getWidth();
-                int current_frame_height = frame.getHeight();
-                log_in_panel.setPreferredSize(new Dimension((int) (current_frame_width * 0.4), (int) (current_frame_height * 0.75)));
-                log_in_panel.revalidate();
-                log_in_panel.repaint();
-            }
-        });
-
-        log_in_panel.revalidate();
-        log_in_panel.repaint();
-
+        log_in_panel.setPreferredSize(new Dimension((int) (frame_width * 0.3), (int) (frame_height * 0.75)));
         frame.add(log_in_panel);
     }
 
