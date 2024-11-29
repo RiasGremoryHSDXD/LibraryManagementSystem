@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -9,7 +11,7 @@ import java.awt.geom.RoundRectangle2D;
 public class LogInForm extends JFrame
 {
     static class RoundedCornerBorder extends AbstractBorder {
-        private static final Color ALPHA_ZERO = new Color(0x0, true);
+        private final Color ALPHA_ZERO = new Color(0x0, true);
         @Override public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -20,17 +22,12 @@ public class LogInForm extends JFrame
             g2.fill(corner);
             g2.setPaint(Color.GRAY);
             g2.draw(border);
-            g2.dispose();
         }
         public Shape getBorderShape(int x, int y, int w, int h) {
             return new RoundRectangle2D.Double(x, y, w, h, 15, 15);
         }
         @Override public Insets getBorderInsets(Component c) {
             return new Insets(4, 8, 4, 8);
-        }
-        @Override public Insets getBorderInsets(Component c, Insets insets) {
-            insets.set(4, 8, 4, 8);
-            return insets;
         }
     }
     LogInForm()
@@ -54,7 +51,8 @@ public class LogInForm extends JFrame
 
     private  void log_in_form_panel(JFrame frame, int frame_width, int frame_height)
     {
-        JPanel log_in_panel = new JPanel() {
+        JPanel log_in_panel = new JPanel()
+        {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -99,14 +97,30 @@ public class LogInForm extends JFrame
         int box_width = (int) (panel_width * 0.8);
         int box_height = (int) (panel_height * 0.13);
 
-        JTextField email_field = new JTextField("Email or username") {
+        JTextField email_field = textFieldPanel("Email or username");
+        email_field.setFont(font_text);
+        email_field.setMaximumSize(new Dimension(box_width, box_height));
+        email_field.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
+        panel.add(email_field);
+
+        // Password field (unchanged)
+        JTextField password_field = textFieldPanel("Password");
+        password_field.setFont(font_text);
+        password_field.setMaximumSize(new Dimension(box_width, box_height));
+        password_field.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
+        panel.add(password_field);
+
+        // Log in button (unchanged)
+        JButton log_in_button = new JButton("Log in")
+        {
             @Override protected void paintComponent(Graphics g) {
                 if (!isOpaque() && getBorder() instanceof RoundedCornerBorder) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setPaint(getBackground());
                     g2.fill(((RoundedCornerBorder) getBorder()).getBorderShape(
                             0, 0, getWidth() - 1, getHeight() - 1));
-                    g2.dispose();
                 }
                 super.paintComponent(g);
             }
@@ -116,21 +130,6 @@ public class LogInForm extends JFrame
                 setBorder(new RoundedCornerBorder());
             }
         };
-        email_field.setFont(font_text);
-        email_field.setMaximumSize(new Dimension(box_width, box_height));
-        email_field.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
-        panel.add(email_field);
-
-        // Password field (unchanged)
-        JPasswordField password_field = new JPasswordField("");
-        password_field.setMaximumSize(new Dimension(box_width, box_height));
-        password_field.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
-        panel.add(password_field);
-
-        // Log in button (unchanged)
-        JButton log_in_button = new JButton("Log in");
         log_in_button.setFont(font_text);
         log_in_button.setBackground(new Color(0x38b6ff));
         log_in_button.setForeground(new Color(0xffde59));
@@ -143,4 +142,47 @@ public class LogInForm extends JFrame
                 System.out.println(email_field.getText())
         );
     }
+
+    JTextField textFieldPanel(String placeholder) {
+
+        JTextField textField = new JTextField(){
+            @Override protected void paintComponent(Graphics g) {
+                if (!isOpaque() && getBorder() instanceof RoundedCornerBorder) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setPaint(getBackground());
+                    g2.fill(((RoundedCornerBorder) getBorder()).getBorderShape(
+                            0, 0, getWidth() - 1, getHeight() - 1));
+                }
+                super.paintComponent(g);
+            }
+            @Override public void updateUI() {
+                super.updateUI();
+                setOpaque(false);
+                setBorder(new RoundedCornerBorder());
+            }
+        };
+        textField.setBackground(Color.WHITE);
+        textField.setForeground(Color.GRAY);
+        textField.setText(placeholder);
+
+        textField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (textField.getText().equals(placeholder)) {
+                    textField.setText("");
+                    textField.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (textField.getText().isEmpty()) {
+                    textField.setText(placeholder);
+                    textField.setForeground(Color.GRAY);
+                }
+            }
+        });
+        return textField;
+    }
+
 }
