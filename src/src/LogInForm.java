@@ -7,7 +7,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
-
 public class LogInForm extends JFrame
 {
     static class RoundedCornerBorder extends AbstractBorder {
@@ -30,96 +29,95 @@ public class LogInForm extends JFrame
             return new Insets(4, 8, 4, 8);
         }
     }
+
+    JFrame frame;
+    JPanel form_panel;
+
+    private final int frame_width;
+    private final int frame_height;
+    int form_width;
+    int form_height;
     LogInForm()
     {
-        int frame_width = 1200;
-        int frame_height = 700;
-        JFrame frame = new JFrame();
+        frame = new JFrame();
+        frame_width = 1200;
+        frame_height = 700;
+        frame.setLayout(new GridBagLayout());
+        frame.setSize(frame_width, frame_height);
+        frame.setResizable(false);
         ImageIcon image = new ImageIcon("src/ImageDirectory/library_logo.png");
         frame.setIconImage(image.getImage());
         frame.setTitle("Library Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(frame_width, frame_height);
-        frame.setResizable(false);
-        frame.setVisible(true);
 
-        frame.setLayout(new GridBagLayout());
-        log_in_form_panel(frame, frame_width, frame_height);
-        frame.revalidate();
-        frame.repaint();
+        this.log_in_form_panel();
+        this.form_component();
+
+        frame.setVisible(true);
     }
 
-    private  void log_in_form_panel(JFrame frame, int frame_width, int frame_height)
+    private void log_in_form_panel()
     {
-        JPanel log_in_panel = new JPanel()
+        form_panel = new JPanel()
         {
             @Override
-            protected void paintComponent(Graphics g) {
+            protected void paintComponent(Graphics g)
+            {
                 super.paintComponent(g);
                 Dimension arcs = new Dimension(30, 30);
                 int width = getWidth();
                 int height = getHeight();
-                Graphics2D graphics = (Graphics2D) g;
-                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                Graphics2D graphics2D = (Graphics2D) g;
 
-                graphics.setColor(getBackground());
-                graphics.fillRoundRect(0, 0, width - 1, height - 1, arcs.width, arcs.height);
+                graphics2D.setColor(getBackground());
+                graphics2D.fillRoundRect(0, 0, width - 1, height - 1, arcs.width, arcs.height);
             }
         };
 
-        int panel_width = (int) (frame_width * 0.3);
-        int panel_height = (int) (frame_height * 0.75);
+        form_panel.setOpaque(false);
+        form_width = (int) (frame_width * 0.3);
+        form_height = (int) (frame_height * 0.75);
 
-        log_in_panel.setBackground(new Color(0xffde59));
-        log_in_panel.setOpaque(false);
-        log_in_panel.setPreferredSize(new Dimension(panel_width, panel_height));
-
-        log_in_panel.setLayout(new BoxLayout(log_in_panel, BoxLayout.Y_AXIS));
-        log_in_panel_component(log_in_panel, panel_width, panel_height);
-        frame.add(log_in_panel);
+        form_panel.setPreferredSize(new Dimension(form_width, form_height));
+        form_panel.setBackground(new Color(0xffde59));
+        form_panel.setLayout(new BoxLayout(form_panel, BoxLayout.Y_AXIS));
+        frame.add(form_panel);
     }
 
-    private void log_in_panel_component(JPanel panel, int panel_width, int panel_height) {
-        ImageIcon logo_img = new ImageIcon("src/ImageDirectory/person_logo.png");
+    private void form_component()
+    {
+        ImageIcon person_logo = new ImageIcon("src/ImageDirectory/person_logo.png");
 
-        int img_width = (int) (panel_width * 0.7);
-        int img_height = (int) (panel_height * 0.4);
-        int margin_height = (int) (panel_height * 0.03);
+        int img_width = (int) (form_width * 0.7);
+        int img_height = (int) (form_height * 0.4);
+        int margin_height = (int) (form_height * 0.03);
+
+        Image scaled_img = person_logo.getImage().getScaledInstance(img_width, img_height, Image.SCALE_SMOOTH);
+        ImageIcon final_logo_size = new ImageIcon(scaled_img);
+        JLabel image = new JLabel(final_logo_size);
+        image.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         Font font_text = new Font("Arial", Font.PLAIN, 20);
+        int box_width = (int) (form_width * 0.8);
+        int box_height = (int) (form_height * 0.13);
 
-        Image scaled_image = logo_img.getImage().getScaledInstance(img_width, img_height, Image.SCALE_SMOOTH);
-        ImageIcon resized_icon = new ImageIcon(scaled_image);
-        JLabel person_logo = new JLabel(resized_icon);
-        person_logo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
-        panel.add(person_logo);
+        JTextField email_text_field = textFieldPanel("Email or username");
+        email_text_field.setFont(font_text);
+        email_text_field.setMaximumSize(new Dimension(box_width, box_height));
+        email_text_field.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        int box_width = (int) (panel_width * 0.8);
-        int box_height = (int) (panel_height * 0.13);
+        JTextField password_text_field = textFieldPanel("Password");
+        password_text_field.setFont(font_text);
+        password_text_field.setMaximumSize(new Dimension(box_width, box_height));
+        password_text_field.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JTextField email_field = textFieldPanel("Email or username");
-        email_field.setFont(font_text);
-        email_field.setMaximumSize(new Dimension(box_width, box_height));
-        email_field.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
-        panel.add(email_field);
-
-        // Password field (unchanged)
-        JTextField password_field = textFieldPanel("Password");
-        password_field.setFont(font_text);
-        password_field.setMaximumSize(new Dimension(box_width, box_height));
-        password_field.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
-        panel.add(password_field);
-
-        // Log in button (unchanged)
         JButton log_in_button = new JButton("Log in")
         {
             @Override protected void paintComponent(Graphics g) {
-                if (!isOpaque() && getBorder() instanceof RoundedCornerBorder) {
+                if (!isOpaque() && getBorder() instanceof LogInForm.RoundedCornerBorder) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setPaint(getBackground());
-                    g2.fill(((RoundedCornerBorder) getBorder()).getBorderShape(
+                    g2.fill(((LogInForm.RoundedCornerBorder) getBorder()).getBorderShape(
                             0, 0, getWidth() - 1, getHeight() - 1));
                 }
                 super.paintComponent(g);
@@ -127,30 +125,35 @@ public class LogInForm extends JFrame
             @Override public void updateUI() {
                 super.updateUI();
                 setOpaque(false);
-                setBorder(new RoundedCornerBorder());
+                setBorder(new LogInForm.RoundedCornerBorder());
             }
         };
+
         log_in_button.setFont(font_text);
+        log_in_button.setFocusable(false);
         log_in_button.setBackground(new Color(0x38b6ff));
         log_in_button.setForeground(new Color(0xffde59));
         log_in_button.setMaximumSize(new Dimension(box_width, box_height));
-        panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
         log_in_button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(log_in_button);
 
-        log_in_button.addActionListener( e ->
-                System.out.println(email_field.getText())
-        );
+        form_panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
+        form_panel.add(image);
+        form_panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
+        form_panel.add(email_text_field);
+        form_panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
+        form_panel.add(password_text_field);
+        form_panel.add(Box.createRigidArea(new Dimension(0, margin_height)));
+        form_panel.add(log_in_button);
     }
 
     JTextField textFieldPanel(String placeholder) {
 
         JTextField textField = new JTextField(){
             @Override protected void paintComponent(Graphics g) {
-                if (!isOpaque() && getBorder() instanceof RoundedCornerBorder) {
+                if (!isOpaque() && getBorder() instanceof LogInForm.RoundedCornerBorder) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setPaint(getBackground());
-                    g2.fill(((RoundedCornerBorder) getBorder()).getBorderShape(
+                    g2.fill(((LogInForm.RoundedCornerBorder) getBorder()).getBorderShape(
                             0, 0, getWidth() - 1, getHeight() - 1));
                 }
                 super.paintComponent(g);
@@ -158,7 +161,7 @@ public class LogInForm extends JFrame
             @Override public void updateUI() {
                 super.updateUI();
                 setOpaque(false);
-                setBorder(new RoundedCornerBorder());
+                setBorder(new LogInForm.RoundedCornerBorder());
             }
         };
         textField.setBackground(Color.WHITE);
@@ -184,5 +187,4 @@ public class LogInForm extends JFrame
         });
         return textField;
     }
-
 }
