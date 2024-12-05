@@ -1,8 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -137,10 +135,34 @@ public class LogInForm extends JFrame
         log_in_button.setForeground(new Color(0xffde59));
         log_in_button.setMaximumSize(new Dimension(box_width, box_height));
         log_in_button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        log_in_button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+
         log_in_button.addActionListener(e ->
         {
-            frame.dispose();
-            new MainMenu();
+            String email = email_text_field.getText();
+            String password = password_text_field.getText();
+
+            LogInAuthentication authentication = new LogInAuthentication("", "");
+            authentication.setUserInputEmail(email);
+            authentication.setUserInputPassword(password);
+            authentication.validateCredentials();
+
+            if (authentication.isCorrectCredentials())
+            {
+                 frame.dispose();
+                 new MainMenu();
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(
+                        frame,
+                        "Invalid email or password. Please try again.",
+                        "Login Failed",
+                        JOptionPane.ERROR_MESSAGE
+                );
+
+            }
         }
         );
 

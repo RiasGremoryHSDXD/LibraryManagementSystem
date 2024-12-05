@@ -13,6 +13,9 @@ public class MainMenu extends JFrame
         frame_height = 700;
         frame.setSize(frame_width, frame_height);
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        ImageIcon image = new ImageIcon("src/ImageDirectory/library_logo.png");
+        frame.setIconImage(image.getImage());
         frame.setLayout(new BorderLayout());
         this.navigation_bar_panel();
 
@@ -65,7 +68,7 @@ public class MainMenu extends JFrame
                 setOpaque(false);
                 setBorder(new LogInForm.RoundedCornerBorder());
             }
-        };;
+        };
         search_button.setPreferredSize(new Dimension((int) (frame_width * 0.05), 45));
         search_button.setMaximumSize(new Dimension((int) (frame_width * 0.05), 45));
         search_button.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -74,9 +77,7 @@ public class MainMenu extends JFrame
         search_button.setBackground(Color.WHITE);
 
         search_button.addActionListener(e ->
-        {
-            System.out.println("Search Bar Text: " + search_bar.getText());
-        }
+                System.out.println("Search Bar Text: " + search_bar.getText())
         );
 
         search_container.add(search_bar, BorderLayout.WEST);
