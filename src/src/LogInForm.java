@@ -151,7 +151,7 @@ public class LogInForm extends JFrame
             if (authentication.isCorrectCredentials())
             {
                  frame.dispose();
-                 new MainMenu();
+                 new MainMenu(authentication.getLibrarianUserName());
             }
             else
             {

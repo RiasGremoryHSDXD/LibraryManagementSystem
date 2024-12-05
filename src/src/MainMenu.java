@@ -6,8 +6,10 @@ public class MainMenu extends JFrame
     private final JFrame frame;
     private final int frame_width;
     private final int frame_height;
-    MainMenu()
+    private String user_name;
+    MainMenu(String user_name)
     {
+        this.user_name = user_name;
         frame = new JFrame();
         frame_width = 1200;
         frame_height = 700;
@@ -18,6 +20,8 @@ public class MainMenu extends JFrame
         frame.setIconImage(image.getImage());
         frame.setLayout(new BorderLayout());
         this.navigation_bar_panel();
+        this.information_panel();
+        this.margin_information_panel();
 
         frame.setVisible(true);
     }
@@ -77,7 +81,10 @@ public class MainMenu extends JFrame
         search_button.setBackground(Color.WHITE);
 
         search_button.addActionListener(e ->
-                System.out.println("Search Bar Text: " + search_bar.getText())
+                {
+                    System.out.println("Search Bar Text: " + search_bar.getText());
+                    System.out.println("User name: " + user_name);
+                }
         );
 
         search_container.add(search_bar, BorderLayout.WEST);
@@ -88,4 +95,47 @@ public class MainMenu extends JFrame
         frame.add(navigation_bar, BorderLayout.NORTH);
     }
 
+    private void information_panel()
+    {
+        TableModel tableModel = new TableModel();
+        JScrollPane scroll_pane = tableModel.scroll_pane_table();
+        JPanel central_panel = new JPanel();
+        central_panel.setBackground(Color.yellow);
+
+        // Add a listener to get dimensions after the panel is laid out
+        central_panel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                System.out.println("Width: " + central_panel.getWidth());
+                System.out.println("Height: " + central_panel.getHeight());
+            }
+        });
+
+        central_panel.add(scroll_pane);
+        frame.add(central_panel);
+    }
+
+    private void margin_information_panel()
+    {
+        JPanel west_panel = new JPanel();
+        JPanel east_panel = new JPanel();
+        JPanel south_panel = new JPanel();
+
+        west_panel.setPreferredSize(new Dimension(300, 0));
+//        east_panel.setPreferredSize(new Dimension(100, 0));
+        south_panel.setPreferredSize(new Dimension(0, (int)(frame_height * 0.1)));
+
+        west_panel.setBackground(Color.green);
+        east_panel.setBackground(Color.green);
+        south_panel.setBackground(Color.green);
+
+        frame.add(west_panel, BorderLayout.WEST);
+//        frame.add(east_panel, BorderLayout.EAST);
+        frame.add(south_panel, BorderLayout.SOUTH);
+    }
+
+    public static void main(String[] args)
+    {
+        new MainMenu("WEw");
+    }
 }
