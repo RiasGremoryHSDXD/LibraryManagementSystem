@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainMenu extends JFrame
 {
@@ -7,6 +9,7 @@ public class MainMenu extends JFrame
     private final int frame_width;
     private final int frame_height;
     private String user_name;
+
     MainMenu(String user_name)
     {
         this.user_name = user_name;
@@ -21,7 +24,7 @@ public class MainMenu extends JFrame
         frame.setLayout(new BorderLayout());
         this.navigation_bar_panel();
         this.information_panel();
-        this.margin_information_panel();
+        this.CRUD_panel();
 
         frame.setVisible(true);
     }
@@ -56,23 +59,7 @@ public class MainMenu extends JFrame
         Image scaled_img_1 = search_logo.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         ImageIcon search_logo_size = new ImageIcon(scaled_img_1);
 
-        JButton search_button = new JButton(search_logo_size)
-        {
-            @Override protected void paintComponent(Graphics g) {
-                if (!isOpaque() && getBorder() instanceof LogInForm.RoundedCornerBorder) {
-                    Graphics2D g2 = (Graphics2D) g.create();
-                    g2.setPaint(getBackground());
-                    g2.fill(((LogInForm.RoundedCornerBorder) getBorder()).getBorderShape(
-                            0, 0, getWidth() - 1, getHeight() - 1));
-                }
-                super.paintComponent(g);
-            }
-            @Override public void updateUI() {
-                super.updateUI();
-                setOpaque(false);
-                setBorder(new LogInForm.RoundedCornerBorder());
-            }
-        };
+        JButton search_button = button_rounded_corner(search_logo_size, true);
         search_button.setPreferredSize(new Dimension((int) (frame_width * 0.05), 45));
         search_button.setMaximumSize(new Dimension((int) (frame_width * 0.05), 45));
         search_button.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -87,6 +74,24 @@ public class MainMenu extends JFrame
                 }
         );
 
+        search_button.addMouseListener(new MouseAdapter()
+        {
+            final Color default_color = Color.WHITE;
+            final Color hover_color = new Color(0xe6e6e6);
+
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+                search_button.setBackground(hover_color);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+                search_button.setBackground(default_color);
+            }
+        });
+
         search_container.add(search_bar, BorderLayout.WEST);
         navigation_bar.add(search_container);
         navigation_bar.add(search_button);
@@ -98,42 +103,145 @@ public class MainMenu extends JFrame
     private void information_panel()
     {
         TableModel tableModel = new TableModel();
-        JScrollPane scroll_pane = tableModel.scroll_pane_table();
         JPanel central_panel = new JPanel();
-        central_panel.setBackground(Color.yellow);
-
-        // Add a listener to get dimensions after the panel is laid out
+        central_panel.setBackground(new Color(0xffffff));
         central_panel.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
-            public void componentResized(java.awt.event.ComponentEvent e) {
-                System.out.println("Width: " + central_panel.getWidth());
-                System.out.println("Height: " + central_panel.getHeight());
+            public void componentResized(java.awt.event.ComponentEvent e)
+            {
+                JScrollPane scroll_pane = tableModel.scroll_pane_table(central_panel.getWidth());
+                central_panel.add(scroll_pane);
             }
         });
 
-        central_panel.add(scroll_pane);
         frame.add(central_panel);
     }
 
-    private void margin_information_panel()
+
+    private void CRUD_panel()
     {
         JPanel west_panel = new JPanel();
-        JPanel east_panel = new JPanel();
-        JPanel south_panel = new JPanel();
-
         west_panel.setPreferredSize(new Dimension(300, 0));
-//        east_panel.setPreferredSize(new Dimension(100, 0));
-        south_panel.setPreferredSize(new Dimension(0, (int)(frame_height * 0.1)));
+        west_panel.setLayout(new BoxLayout(west_panel, BoxLayout.Y_AXIS));
+        west_panel.setBackground(new Color(0xffffff));
 
-        west_panel.setBackground(Color.green);
-        east_panel.setBackground(Color.green);
-        south_panel.setBackground(Color.green);
+        JButton add_button = button_rounded_corner(null, false);
+        crud_button_attribute(add_button, "Add");
+
+        JButton update_button = button_rounded_corner(null, false);
+        crud_button_attribute(update_button, "Update");
+
+        JButton delete_button = button_rounded_corner(null, false);
+        crud_button_attribute(delete_button, "Delete");
+
+        JButton today_transaction_button = button_rounded_corner(null, false);
+        crud_button_attribute(today_transaction_button, "Today's Transaction");
+
+        JButton pending_return = button_rounded_corner(null, false);
+        crud_button_attribute(pending_return, "Pending Return");
+
+        JButton return_book = button_rounded_corner(null, false);
+        crud_button_attribute(return_book, "Returned");
+
+        add_button.addActionListener(e -> System.out.println("Add"));
+        update_button.addActionListener(e -> System.out.println("Update"));
+        delete_button.addActionListener(e -> System.out.println("Delete"));
+        today_transaction_button.addActionListener(e -> System.out.println("Today's Transaction"));
+        pending_return.addActionListener(e -> System.out.println("Pending Return"));
+        return_book.addActionListener(e -> System.out.println("Returned"));
+
+        west_panel.add(Box.createVerticalGlue());
+        west_panel.add(add_button);
+        west_panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        west_panel.add(update_button);
+        west_panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        west_panel.add(delete_button);
+        west_panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        west_panel.add(today_transaction_button);
+        west_panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        west_panel.add(pending_return);
+        west_panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        west_panel.add(return_book);
+        west_panel.add(Box.createVerticalGlue());
 
         frame.add(west_panel, BorderLayout.WEST);
-//        frame.add(east_panel, BorderLayout.EAST);
-        frame.add(south_panel, BorderLayout.SOUTH);
     }
 
+    private void crud_button_attribute(JButton button, String button_message)
+    {
+        button.setPreferredSize(new Dimension((int) (frame_width * 0.2), 45));
+        button.setMaximumSize(new Dimension((int) (frame_width * 0.2), 45));
+        button.setText(button_message);
+        button.setBackground(new Color(0x38b6ff));
+        button.setFont(new Font("Arial", Font.PLAIN, 20));
+        button.setFocusable(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        button.addMouseListener(new MouseAdapter()
+        {
+            final Color default_back_ground_color = new Color(0x38b6ff);
+            final Color hover_color = new Color(0xe6e6e6);
+
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+                button.setBackground(hover_color);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+                button.setBackground(default_back_ground_color);
+            }
+        });
+    }
+
+    private JButton button_rounded_corner(ImageIcon image, boolean has_image)
+    {
+        JButton button_corner;
+        if(has_image)
+        {
+             button_corner = new JButton(image)
+             {
+                 @Override protected void paintComponent(Graphics g) {
+                     if (!isOpaque() && getBorder() instanceof LogInForm.RoundedCornerBorder) {
+                         Graphics2D g2 = (Graphics2D) g.create();
+                         g2.setPaint(getBackground());
+                         g2.fill(((LogInForm.RoundedCornerBorder) getBorder()).getBorderShape(
+                                 0, 0, getWidth() - 1, getHeight() - 1));
+                     }
+                     super.paintComponent(g);
+                 }
+                 @Override public void updateUI() {
+                     super.updateUI();
+                     setOpaque(false);
+                     setBorder(new LogInForm.RoundedCornerBorder());
+                 }
+             };
+        }
+        else
+        {
+             button_corner = new JButton()
+             {
+                 @Override protected void paintComponent(Graphics g) {
+                     if (!isOpaque() && getBorder() instanceof LogInForm.RoundedCornerBorder) {
+                         Graphics2D g2 = (Graphics2D) g.create();
+                         g2.setPaint(getBackground());
+                         g2.fill(((LogInForm.RoundedCornerBorder) getBorder()).getBorderShape(
+                                 0, 0, getWidth() - 1, getHeight() - 1));
+                     }
+                     super.paintComponent(g);
+                 }
+                 @Override public void updateUI() {
+                     super.updateUI();
+                     setOpaque(false);
+                     setBorder(new LogInForm.RoundedCornerBorder());
+                 }
+             };
+        }
+        return button_corner;
+    }
     public static void main(String[] args)
     {
         new MainMenu("WEw");

@@ -10,7 +10,7 @@ public class TableModel
     String user = "root";
     String password = "";
 
-    JScrollPane scroll_pane_table()
+    JScrollPane scroll_pane_table(int table_width)
     {
         try
         {
@@ -18,21 +18,21 @@ public class TableModel
             Statement transaction_date = connection.createStatement();
 
             String wew = """
-                    SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.borrow_date, t.return_date
-                    FROM librarian_transaction t
-                    inner join book b on b.book_id = t.book_id
-                    inner join staff l on l.staff_id = t.staff_id
-                    inner join student s on s.student_id = t.student_id
+                   SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
+                   FROM librarian_transaction t
+                   join book b on b.book_id = t.book_id
+                   inner join staff l on l.staff_id = t.staff_id
+                   inner join student s on s.student_id = t.student_id
                     """;
             ResultSet query = transaction_date.executeQuery(wew);
 
-            String[] column = {"librarian_name", "student_id", "student_name", "book_id", "book_title", "book_ISBN", "borrow_date", "return_date"};
+            String[] column = {"librarian_name", "student_id", "student_name", "book_id", "book_title", "book_ISBN", "book_quantity", "borrow_date", "return_date"};
             DefaultTableModel table_model = new DefaultTableModel(column, 0)
             {
                 @Override
                 public boolean isCellEditable(int row, int column)
                 {
-                    return column == 7;
+                    return column == 8;
                 }
             };
 
@@ -46,6 +46,7 @@ public class TableModel
                                 query.getInt("book_id"),
                                 query.getString("title"),
                                 query.getString("ISBN"),
+                                query.getInt("quantity"),
                                 query.getDate("borrow_date"),
                                 query.getDate("return_date")
                         };
@@ -53,7 +54,7 @@ public class TableModel
             }
 
             JTable table = new JTable(table_model);
-            table.setPreferredScrollableViewportSize(new Dimension(884 - 20, 50));
+            table.setPreferredScrollableViewportSize(new Dimension((int) (table_width * 0.98), 50));
             return new JScrollPane(table);
         }
         catch (Exception e)
