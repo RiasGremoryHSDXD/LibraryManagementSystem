@@ -1,13 +1,14 @@
 import javax.swing.*;
+import javax.swing.text.BoxView;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 public class MainMenu extends JFrame
 {
     private final JFrame frame;
     private final int frame_width;
     private final int frame_height;
+    private JPanel central_panel;
     private String user_name;
 
     MainMenu(String user_name)
@@ -103,13 +104,14 @@ public class MainMenu extends JFrame
     private void information_panel()
     {
         TableModel tableModel = new TableModel();
-        JPanel central_panel = new JPanel();
+        central_panel = new JPanel();
         central_panel.setBackground(new Color(0xffffff));
-        central_panel.addComponentListener(new java.awt.event.ComponentAdapter() {
+        central_panel.addComponentListener(new ComponentAdapter()
+        {
             @Override
-            public void componentResized(java.awt.event.ComponentEvent e)
+            public void componentResized(ComponentEvent e)
             {
-                JScrollPane scroll_pane = tableModel.scroll_pane_table(central_panel.getWidth());
+                JScrollPane scroll_pane = tableModel.scroll_pane_table(central_panel.getWidth(), 1);
                 central_panel.add(scroll_pane);
             }
         });
@@ -117,9 +119,11 @@ public class MainMenu extends JFrame
         frame.add(central_panel);
     }
 
-
     private void CRUD_panel()
     {
+        TableModel tableModel = new TableModel();
+        TextFieldComponent text_field_component = new TextFieldComponent();
+
         JPanel west_panel = new JPanel();
         west_panel.setPreferredSize(new Dimension(300, 0));
         west_panel.setLayout(new BoxLayout(west_panel, BoxLayout.Y_AXIS));
@@ -143,12 +147,128 @@ public class MainMenu extends JFrame
         JButton return_book = button_rounded_corner(null, false);
         crud_button_attribute(return_book, "Returned");
 
-        add_button.addActionListener(e -> System.out.println("Add"));
+        add_button.addActionListener(e ->
+        {
+            ComboBoxData combo_box_data = new ComboBoxData();
+            InputChecker input_checker = new InputChecker();
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+            JTextField first_name_tf = text_field_component.textFieldPanel("First name");
+            JTextField middle_name_tf = text_field_component.textFieldPanel("Middle name");
+            JTextField last_name_tf = text_field_component.textFieldPanel("Last name");
+            JTextField student_id = text_field_component.textFieldPanel("Student ID");
+            JTextField email_address = text_field_component.textFieldPanel("Email address");
+            JTextField contact_number = text_field_component.textFieldPanel("Contact number");
+            JTextField location = text_field_component.textFieldPanel("Location");
+            JTextField quantity = text_field_component.textFieldPanel("Quantity");
+            JComboBox<String> book_name = new JComboBox<>(combo_box_data.return_available_book());
+
+            panel.add(first_name_tf);
+            panel.add(Box.createRigidArea(new Dimension(0, 10)));
+            panel.add(middle_name_tf);
+            panel.add(Box.createRigidArea(new Dimension(0, 10)));
+            panel.add(last_name_tf);
+            panel.add(Box.createRigidArea(new Dimension(0, 10)));
+            panel.add(student_id);
+            panel.add(Box.createRigidArea(new Dimension(0, 10)));
+            panel.add(email_address);
+            panel.add(Box.createRigidArea(new Dimension(0, 10)));
+            panel.add(contact_number);
+            panel.add(Box.createRigidArea(new Dimension(0, 10)));
+            panel.add(location);
+            panel.add(Box.createRigidArea(new Dimension(0, 10)));
+            panel.add(quantity);
+            panel.add(Box.createRigidArea(new Dimension(0, 10)));
+            panel.add(book_name);
+
+            Object[] options = {"Add", "Back"};
+            int input_data = JOptionPane.showOptionDialog
+            (
+                    frame,
+                    panel,
+                    "Enter borrower details",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+            );
+
+            if(input_data == JOptionPane.OK_OPTION)
+            {
+                if(!input_checker.isLetterChecker(first_name_tf.getText()) ||
+                        !input_checker.isLetterChecker(middle_name_tf.getText()) ||
+                        !input_checker.isLetterChecker(last_name_tf.getText()) ||
+                        !input_checker.isNumberChecker(student_id.getText()) ||
+                        !input_checker.isLetterChecker(email_address.getText()) ||
+                        !input_checker.isNumberChecker(contact_number.getText()) ||
+                        !input_checker.isNumberChecker(quantity.getText())
+                )
+                {
+                    JOptionPane.showMessageDialog
+                            (
+                                    frame,
+                                    "Invalid student details input",
+                                    "Invalid Borrowed Details",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                }
+                else if(first_name_tf.getText().equals("First name")||
+                        middle_name_tf.getText().equals("Middle name") ||
+                        last_name_tf.getText().equals("Last name") ||
+                        student_id.getText().equals("Student ID") ||
+                        email_address.getText().equals("Email address") ||
+                        contact_number.getText().equals("Contact number") ||
+                        location.getText().equals("Location") ||
+                        quantity.getText().equals("Quantity")
+                )
+                {
+                    JOptionPane.showMessageDialog
+                            (
+                                    frame,
+                                    "Some student details is missing",
+                                    "Invalid Borrowed Details",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog
+                            (
+                                    frame,
+                                    "Complete Details"
+                            );
+                }
+
+            }
+        });
         update_button.addActionListener(e -> System.out.println("Update"));
         delete_button.addActionListener(e -> System.out.println("Delete"));
-        today_transaction_button.addActionListener(e -> System.out.println("Today's Transaction"));
-        pending_return.addActionListener(e -> System.out.println("Pending Return"));
-        return_book.addActionListener(e -> System.out.println("Returned"));
+        today_transaction_button.addActionListener(e ->
+        {
+            central_panel.removeAll();
+            JScrollPane scrollPane = tableModel.scroll_pane_table(central_panel.getWidth(), 4);
+            central_panel.add(scrollPane);
+            central_panel.repaint();
+            central_panel.revalidate();
+        });
+        pending_return.addActionListener(e ->
+        {
+            central_panel.removeAll();
+            JScrollPane scrollPane = tableModel.scroll_pane_table(central_panel.getWidth(), 2);
+            central_panel.add(scrollPane);
+            central_panel.revalidate();
+            central_panel.repaint();
+        });
+        return_book.addActionListener(e ->
+        {
+            central_panel.removeAll();
+            JScrollPane scrollPane = tableModel.scroll_pane_table(central_panel.getWidth(), 3);
+            central_panel.add(scrollPane);
+            central_panel.revalidate();
+            central_panel.repaint();
+        });
 
         west_panel.add(Box.createVerticalGlue());
         west_panel.add(add_button);
@@ -242,8 +362,8 @@ public class MainMenu extends JFrame
         }
         return button_corner;
     }
-    public static void main(String[] args)
-    {
-        new MainMenu("WEw");
-    }
+//    public static void main(String[] args)
+//    {
+//        new MainMenu("WEw");
+//    }
 }
