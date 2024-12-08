@@ -6,9 +6,8 @@ import java.sql.*;
 
 public class TableModel
 {
-    String url = "jdbc:mysql://127.0.0.1:3306/library_management_system";
-    String user = "root";
-    String password = "";
+
+    DataBaseConnection db_connect = new DataBaseConnection();
     DefaultTableModel table_model;
     String sql_query;
 
@@ -16,13 +15,13 @@ public class TableModel
     {
         try
         {
-            Connection connection = DriverManager.getConnection(url, user, password);
+            Connection connection = DriverManager.getConnection(db_connect.get_connect()[0], db_connect.get_connect()[1], db_connect.get_connect()[2]);
             Statement transaction_statement = connection.createStatement();
             if(type_of_table == 1)
             {
                  sql_query =
                         """
-                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
+                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
                         FROM librarian_transaction t
                         inner join book b on b.book_id = t.book_id
                         inner join staff l on l.staff_id = t.staff_id
@@ -34,7 +33,7 @@ public class TableModel
             {
                 sql_query =
                         """
-                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
+                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
                         FROM librarian_transaction t
                         inner join book b on b.book_id = t.book_id
                         inner join staff l on l.staff_id = t.staff_id
@@ -48,7 +47,7 @@ public class TableModel
 
                 sql_query =
                         """
-                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
+                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
                         FROM librarian_transaction t
                         inner join book b on b.book_id = t.book_id
                         inner join staff l on l.staff_id = t.staff_id
@@ -61,7 +60,7 @@ public class TableModel
             {
                 sql_query =
                         """
-                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
+                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
                         FROM librarian_transaction t
                         inner join book b on b.book_id = t.book_id
                         inner join staff l on l.staff_id = t.staff_id
@@ -86,7 +85,7 @@ public class TableModel
                 Object[] row =
                         {
                                 query.getString("librarian_name"),
-                                query.getInt("student_id"),
+                                query.getLong("student_number_id"),
                                 query.getString("student_name"),
                                 query.getInt("book_id"),
                                 query.getString("title"),

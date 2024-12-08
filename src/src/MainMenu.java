@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.text.BoxView;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -9,11 +8,13 @@ public class MainMenu extends JFrame
     private final int frame_width;
     private final int frame_height;
     private JPanel central_panel;
-    private String user_name;
+    private final String user_name;
+    private final int staff_id;
 
-    MainMenu(String user_name)
+    MainMenu(String user_name, int staff_id)
     {
         this.user_name = user_name;
+        this.staff_id = staff_id;
         frame = new JFrame();
         frame_width = 1200;
         frame_height = 700;
@@ -42,7 +43,20 @@ public class MainMenu extends JFrame
         Image scaled_img = person_logo.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
         ImageIcon final_logo_size = new ImageIcon(scaled_img);
         JLabel image = new JLabel(final_logo_size);
+        image.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        image.addMouseListener(new MouseAdapter(){
+        @Override
+        public void mouseClicked(MouseEvent e)
+        {
+            frame.dispose();
+            new LogInForm();
+        }
+        });
+
         image.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
+
 
         JPanel search_container = new JPanel();
         search_container.setLayout(new BorderLayout());
@@ -63,7 +77,6 @@ public class MainMenu extends JFrame
         JButton search_button = button_rounded_corner(search_logo_size, true);
         search_button.setPreferredSize(new Dimension((int) (frame_width * 0.05), 45));
         search_button.setMaximumSize(new Dimension((int) (frame_width * 0.05), 45));
-        search_button.setFont(new Font("Arial", Font.PLAIN, 20));
         search_button.setFocusable(false);
         search_button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         search_button.setBackground(Color.WHITE);
@@ -151,6 +164,9 @@ public class MainMenu extends JFrame
         {
             ComboBoxData combo_box_data = new ComboBoxData();
             InputChecker input_checker = new InputChecker();
+            BookDetails book_details = new BookDetails();
+            AddBorrowerData add_borrower_data = new AddBorrowerData();
+
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -197,12 +213,14 @@ public class MainMenu extends JFrame
 
             if(input_data == JOptionPane.OK_OPTION)
             {
-                if(!input_checker.isLetterChecker(first_name_tf.getText()) ||
+                if(
+                        !input_checker.isLetterChecker(first_name_tf.getText()) ||
                         !input_checker.isLetterChecker(middle_name_tf.getText()) ||
                         !input_checker.isLetterChecker(last_name_tf.getText()) ||
-                        !input_checker.isNumberChecker(student_id.getText()) ||
-                        !input_checker.isLetterChecker(email_address.getText()) ||
+                        !input_checker.isValidStudentID(student_id.getText()) ||
+                        !input_checker.isValidEmail(email_address.getText()) ||
                         !input_checker.isNumberChecker(contact_number.getText()) ||
+                        !input_checker.isValidContactNumber(contact_number.getText()) ||
                         !input_checker.isNumberChecker(quantity.getText())
                 )
                 {
@@ -214,14 +232,11 @@ public class MainMenu extends JFrame
                                     JOptionPane.ERROR_MESSAGE
                             );
                 }
-                else if(first_name_tf.getText().equals("First name")||
+                else if(
+                        first_name_tf.getText().equals("First name")||
                         middle_name_tf.getText().equals("Middle name") ||
                         last_name_tf.getText().equals("Last name") ||
-                        student_id.getText().equals("Student ID") ||
-                        email_address.getText().equals("Email address") ||
-                        contact_number.getText().equals("Contact number") ||
-                        location.getText().equals("Location") ||
-                        quantity.getText().equals("Quantity")
+                        location.getText().equals("Location")
                 )
                 {
                     JOptionPane.showMessageDialog
@@ -232,12 +247,32 @@ public class MainMenu extends JFrame
                                     JOptionPane.ERROR_MESSAGE
                             );
                 }
-                else
+                else if(book_details.BookInfo((String) book_name.getSelectedItem())[0] <  Integer.parseInt(quantity.getText()))
                 {
                     JOptionPane.showMessageDialog
                             (
                                     frame,
-                                    "Complete Details"
+                                    "The current quantity of the book titled \"" + book_name.getSelectedItem() + "\" is " + book_details.BookInfo((String) book_name.getSelectedItem())[0],
+                                    "Invalid Book Quantity",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                }
+                else
+                {
+                    add_borrower_data.addStudentTable(
+                            Long.parseLong(student_id.getText()),
+                            first_name_tf.getText(),
+                            middle_name_tf.getText(),
+                            last_name_tf.getText(),
+                            email_address.getText(),
+                            contact_number.getText(),
+                            location.getText()
+                            );
+                    add_borrower_data.addTransactionTable(book_details.BookInfo((String) book_name.getSelectedItem())[1], staff_id, add_borrower_data.getStudent_id(), Integer.parseInt(quantity.getText()));
+                    JOptionPane.showMessageDialog
+                            (
+                                    frame,
+                                    "Successfully added the borrowed details"
                             );
                 }
 
@@ -362,8 +397,8 @@ public class MainMenu extends JFrame
         }
         return button_corner;
     }
-//    public static void main(String[] args)
-//    {
-//        new MainMenu("WEw");
+
+//    public static void main(String[] args) {
+//        new MainMenu("WEw", 1);
 //    }
 }

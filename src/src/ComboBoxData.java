@@ -4,9 +4,7 @@ import java.util.List;
 
 public class ComboBoxData
 {
-    String url = "jdbc:mysql://127.0.0.1:3306/library_management_system";
-    String user = "root";
-    String password = "";
+    DataBaseConnection db_connect = new DataBaseConnection();
     String[] book_array;
 
     ComboBoxData()
@@ -14,14 +12,9 @@ public class ComboBoxData
         List<String> book_title = new ArrayList<>();
         try
         {
-            Connection connection = DriverManager.getConnection(url, user, password);
+            Connection connection = DriverManager.getConnection(db_connect.get_connect()[0], db_connect.get_connect()[1], db_connect.get_connect()[2]);
             Statement book_statement = connection.createStatement();
-            String query =
-                    """
-                    select title, isbn
-                    from book
-                    where number_of_copies > 0
-                    """;
+            String query = "select title, isbn from book where number_of_copies > 0";
 
             ResultSet resultSet = book_statement.executeQuery(query);
             while (resultSet.next())
