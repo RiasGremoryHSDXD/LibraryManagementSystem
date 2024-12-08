@@ -124,7 +124,7 @@ public class MainMenu extends JFrame
             @Override
             public void componentResized(ComponentEvent e)
             {
-                JScrollPane scroll_pane = tableModel.scroll_pane_table(central_panel.getWidth(), 1);
+                JScrollPane scroll_pane = tableModel.scroll_pane_table(central_panel.getWidth(), central_panel.getHeight() , 1);
                 central_panel.add(scroll_pane);
             }
         });
@@ -148,8 +148,8 @@ public class MainMenu extends JFrame
         JButton update_button = button_rounded_corner(null, false);
         crud_button_attribute(update_button, "Update");
 
-        JButton delete_button = button_rounded_corner(null, false);
-        crud_button_attribute(delete_button, "Delete");
+        JButton all_transaction = button_rounded_corner(null, false);
+        crud_button_attribute(all_transaction, "All Transaction");
 
         JButton today_transaction_button = button_rounded_corner(null, false);
         crud_button_attribute(today_transaction_button, "Today's Transaction");
@@ -279,11 +279,19 @@ public class MainMenu extends JFrame
             }
         });
         update_button.addActionListener(e -> System.out.println("Update"));
-        delete_button.addActionListener(e -> System.out.println("Delete"));
+        all_transaction.addActionListener(e ->
+        {
+            central_panel.removeAll();
+            JScrollPane scroll_panel = tableModel.scroll_pane_table(central_panel.getWidth(), central_panel.getHeight(), 1);
+            central_panel.add(scroll_panel);
+            central_panel.repaint();
+            central_panel.revalidate();
+        }
+        );
         today_transaction_button.addActionListener(e ->
         {
             central_panel.removeAll();
-            JScrollPane scrollPane = tableModel.scroll_pane_table(central_panel.getWidth(), 4);
+            JScrollPane scrollPane = tableModel.scroll_pane_table(central_panel.getWidth(), central_panel.getHeight(),4);
             central_panel.add(scrollPane);
             central_panel.repaint();
             central_panel.revalidate();
@@ -291,7 +299,7 @@ public class MainMenu extends JFrame
         pending_return.addActionListener(e ->
         {
             central_panel.removeAll();
-            JScrollPane scrollPane = tableModel.scroll_pane_table(central_panel.getWidth(), 2);
+            JScrollPane scrollPane = tableModel.scroll_pane_table(central_panel.getWidth(), central_panel.getHeight(),2);
             central_panel.add(scrollPane);
             central_panel.revalidate();
             central_panel.repaint();
@@ -299,7 +307,7 @@ public class MainMenu extends JFrame
         return_book.addActionListener(e ->
         {
             central_panel.removeAll();
-            JScrollPane scrollPane = tableModel.scroll_pane_table(central_panel.getWidth(), 3);
+            JScrollPane scrollPane = tableModel.scroll_pane_table(central_panel.getWidth(), central_panel.getHeight(),3);
             central_panel.add(scrollPane);
             central_panel.revalidate();
             central_panel.repaint();
@@ -310,7 +318,7 @@ public class MainMenu extends JFrame
         west_panel.add(Box.createRigidArea(new Dimension(0, 10)));
         west_panel.add(update_button);
         west_panel.add(Box.createRigidArea(new Dimension(0, 10)));
-        west_panel.add(delete_button);
+        west_panel.add(all_transaction);
         west_panel.add(Box.createRigidArea(new Dimension(0, 10)));
         west_panel.add(today_transaction_button);
         west_panel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -398,7 +406,7 @@ public class MainMenu extends JFrame
         return button_corner;
     }
 
-//    public static void main(String[] args) {
-//        new MainMenu("WEw", 1);
-//    }
+    public static void main(String[] args) {
+        new MainMenu("WEw", 1);
+    }
 }

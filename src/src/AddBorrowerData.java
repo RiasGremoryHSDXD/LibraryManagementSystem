@@ -54,9 +54,37 @@ public class AddBorrowerData
             long millis = System.currentTimeMillis();
             Date currentDate = new Date(millis);
             insert_transaction_table.setDate(5, currentDate);
-
             insert_transaction_table.executeUpdate();
+            this.updateBookQuantity(book_id, quantity);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
+    public void updateBookQuantity(int book_id,int quantity)
+    {
+        String update_book_quantity = "UPDATE book SET number_of_copies = ? WHERE book_id = ?";
+        String get_book_quantity = "SELECT number_of_copies FROM book WHERE book_id = ?";
+        try
+        {
+            Connection connection = DriverManager.getConnection(db_connect.get_connect()[0], db_connect.get_connect()[1], db_connect.get_connect()[2]);
+            PreparedStatement get_quantity = connection.prepareStatement(get_book_quantity);
+            get_quantity.setInt(1, book_id);
+
+            ResultSet resultSet = get_quantity.executeQuery();
+            if (resultSet.next())
+            {
+                int current_book_quantity = resultSet.getInt("number_of_copies");
+                PreparedStatement update_quantity = connection.prepareStatement(update_book_quantity);
+
+                int book_updated_quantity = current_book_quantity - quantity;
+
+                update_quantity.setInt(1, book_updated_quantity);
+                update_quantity.setInt(2, book_id);
+                update_quantity.executeUpdate();
+            }
         }
         catch (Exception e)
         {
@@ -68,9 +96,5 @@ public class AddBorrowerData
     {
         return this.student_id;
     }
-//    public static void main(String[] args)
-//    {
-//        AddBorrowerData addBorrowerData = new AddBorrowerData();
-//        addBorrowerData.addTransactionTable(1, 1, 2023300261, 10);
-//    }
+
 }

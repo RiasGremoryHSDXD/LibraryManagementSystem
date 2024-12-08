@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.*;
 
 
@@ -11,7 +13,7 @@ public class TableModel
     DefaultTableModel table_model;
     String sql_query;
 
-    JScrollPane scroll_pane_table(int table_width, int type_of_table)
+    JScrollPane scroll_pane_table(int table_width, int table_height, int type_of_table)
     {
         try
         {
@@ -21,7 +23,7 @@ public class TableModel
             {
                  sql_query =
                         """
-                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
+                        SELECT librarian_transaction_id as transaction_id, CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_id as record_number,s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.title, t.quantity, t.borrow_date, t.return_date
                         FROM librarian_transaction t
                         inner join book b on b.book_id = t.book_id
                         inner join staff l on l.staff_id = t.staff_id
@@ -33,7 +35,7 @@ public class TableModel
             {
                 sql_query =
                         """
-                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
+                        SELECT librarian_transaction_id as transaction_id, CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_id as record_number, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.title, t.quantity, t.borrow_date, t.return_date
                         FROM librarian_transaction t
                         inner join book b on b.book_id = t.book_id
                         inner join staff l on l.staff_id = t.staff_id
@@ -47,7 +49,7 @@ public class TableModel
 
                 sql_query =
                         """
-                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
+                        SELECT librarian_transaction_id as transaction_id, CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_id as record_number, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.title, t.quantity, t.borrow_date, t.return_date
                         FROM librarian_transaction t
                         inner join book b on b.book_id = t.book_id
                         inner join staff l on l.staff_id = t.staff_id
@@ -60,7 +62,7 @@ public class TableModel
             {
                 sql_query =
                         """
-                        SELECT CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.book_id, b.title, b.ISBN, t.quantity, t.borrow_date, t.return_date
+                        SELECT librarian_transaction_id as transaction_id, CONCAT(l.last_name, ", ", l.first_name, " ", l.middle_name) as librarian_name, s.student_id as record_number, s.student_number_id, CONCAT(s.last_name, ", ", s.first_name, " ", s.middle_name) as student_name, b.title, t.quantity, t.borrow_date, t.return_date
                         FROM librarian_transaction t
                         inner join book b on b.book_id = t.book_id
                         inner join staff l on l.staff_id = t.staff_id
@@ -70,7 +72,7 @@ public class TableModel
             }
 
             ResultSet query = transaction_statement.executeQuery(sql_query);
-            String[] column = {"librarian_name", "student_id", "student_name", "book_id", "book_title", "book_ISBN", "book_quantity", "borrow_date", "return_date"};
+            String[] column = {"Transaction #","Librarian Name", "record #" ,"Student ID", "Student Name", "Book Title", "Quantity", "Borrow Date", "Return Date"};
             table_model = new DefaultTableModel(column, 0)
             {
                 @Override
@@ -84,12 +86,12 @@ public class TableModel
             {
                 Object[] row =
                         {
+                                query.getLong("transaction_id"),
                                 query.getString("librarian_name"),
+                                query.getLong("record_number"),
                                 query.getLong("student_number_id"),
                                 query.getString("student_name"),
-                                query.getInt("book_id"),
                                 query.getString("title"),
-                                query.getString("ISBN"),
                                 query.getInt("quantity"),
                                 query.getDate("borrow_date"),
                                 query.getDate("return_date")
@@ -98,7 +100,43 @@ public class TableModel
             }
 
             JTable table = new JTable(table_model);
-            table.setPreferredScrollableViewportSize(new Dimension((int) (table_width * 0.98), 50));
+            table.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            table.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2)
+                    {
+                        row_is_right_click(table, e);
+                    }
+                }
+
+                private void row_is_right_click(JTable table, MouseEvent e)
+                {
+                    int row = table.rowAtPoint(e.getPoint());
+                    if(row >= 0)
+                    {
+                        long record_number = (long) table.getValueAt(row, 2);
+                        long transaction_id = (long) table.getValueAt(row, 0);
+                        int book_quantity = (int) table.getValueAt(row, 6);
+                        String book_name = (String) table.getValueAt(row, 5);
+                        int result = JOptionPane.showConfirmDialog
+                                (
+                                        null,
+                                        "Are you sure you want to delete this row with transaction ID: " + transaction_id,
+                                        "Delete Record",
+                                        JOptionPane.OK_CANCEL_OPTION,
+                                        JOptionPane.WARNING_MESSAGE
+                                );
+
+                        if(result == JOptionPane.OK_OPTION)
+                        {
+                            DeleteBorrowerData delete_borrower_data = new DeleteBorrowerData();
+                            delete_borrower_data.deleteStudentRecord(record_number, book_quantity, book_name);
+                        }
+                    }
+                }
+            });
+            table.setPreferredScrollableViewportSize(new Dimension((int) (table_width * 0.98), (int) (table_height * 0.70)));
             return new JScrollPane(table);
         }
         catch (Exception e)
