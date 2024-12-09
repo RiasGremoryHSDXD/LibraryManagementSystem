@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 
 public class MainMenu extends JFrame
 {
@@ -46,17 +47,26 @@ public class MainMenu extends JFrame
         image.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         image.addMouseListener(new MouseAdapter(){
-        @Override
-        public void mouseClicked(MouseEvent e)
-        {
-            frame.dispose();
-            new LogInForm();
-        }
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                int user_log_out = JOptionPane.showConfirmDialog
+                        (
+                                frame,
+                                "You Wish to log out?",
+                                "Log out",
+                                JOptionPane.OK_CANCEL_OPTION
+                        );
+
+                if(user_log_out == JOptionPane.OK_OPTION)
+                {
+                    frame.dispose();
+                    new LogInForm();
+                }
+            }
         });
 
         image.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
-
-
 
         JPanel search_container = new JPanel();
         search_container.setLayout(new BorderLayout());
@@ -267,8 +277,12 @@ public class MainMenu extends JFrame
                             email_address.getText(),
                             contact_number.getText(),
                             location.getText()
-                            );
-                    add_borrower_data.addTransactionTable(book_details.BookInfo((String) book_name.getSelectedItem())[1], staff_id, add_borrower_data.getStudent_id(), Integer.parseInt(quantity.getText()));
+                    );
+                    add_borrower_data.addTransactionTable(
+                            book_details.BookInfo((String) book_name.getSelectedItem())[1],
+                            staff_id, add_borrower_data.getStudent_id(),
+                            Integer.parseInt(quantity.getText())
+                    );
                     JOptionPane.showMessageDialog
                             (
                                     frame,
@@ -278,7 +292,78 @@ public class MainMenu extends JFrame
 
             }
         });
-        update_button.addActionListener(e -> System.out.println("Update"));
+
+        update_button.addActionListener(e ->
+        {
+            UpdateBorrowerData updateBorrowerData = new UpdateBorrowerData();
+             String user_input = JOptionPane.showInputDialog
+                                (
+                                        frame,
+                                        "Transaction #:",
+                                        "Borrower Returned Book",
+                                        JOptionPane.PLAIN_MESSAGE
+                                );
+
+
+             if(user_input == null)
+             {
+                 JOptionPane.showMessageDialog
+                         (
+                                 frame,
+                                 "The Update is cancel",
+                                 "Cancel Update",
+                                 JOptionPane.PLAIN_MESSAGE
+                         );
+             }
+             else if(!user_input.isEmpty())
+             {
+                 if(updateBorrowerData.validate_transaction_number(Integer.parseInt(user_input)))
+                 {
+                     Object[] get_date = updateBorrowerData.borrower_return_info(Integer.parseInt(user_input));
+                     long student_id = (long) get_date[0];
+                     String student_name = (String) get_date[1];
+                     int quantity = (int) get_date[2];
+                     Date borrower_date = (Date) get_date[3];
+
+                     int user_choose = JOptionPane.showConfirmDialog
+                             (
+                                     frame,
+                                     "Student ID: " + student_id + "\n" +
+                                             "Student Name: " + student_name + "\n" +
+                                             "Quantity: " + quantity + "\n" +
+                                             "Borrower Date: " + borrower_date,
+                                     "Borrower Details",
+                                     JOptionPane.OK_CANCEL_OPTION
+                             );
+
+                     if(user_choose == JOptionPane.OK_OPTION)
+                     {
+                         updateBorrowerData.update_returned_date(Integer.parseInt(user_input));
+                     }
+
+                 }
+                 else
+                 {
+                     JOptionPane.showMessageDialog
+                             (
+                                     frame,
+                                     "Transaction # is not found or the borrower already return the book"
+                            );
+                 }
+             }
+             else
+             {
+                 JOptionPane.showMessageDialog
+                         (
+                                 frame,
+                                 "Transaction # is empty",
+                                 "Error",
+                                 JOptionPane.ERROR_MESSAGE
+                         );
+             }
+
+        });
+
         all_transaction.addActionListener(e ->
         {
             central_panel.removeAll();
@@ -406,7 +491,7 @@ public class MainMenu extends JFrame
         return button_corner;
     }
 
-    public static void main(String[] args) {
-        new MainMenu("WEw", 1);
-    }
+//    public static void main(String[] args) {
+//        new MainMenu("WEw", 1);
+//    }
 }

@@ -131,7 +131,7 @@ public class TableModel
                         if(result == JOptionPane.OK_OPTION)
                         {
                             DeleteBorrowerData delete_borrower_data = new DeleteBorrowerData();
-                            delete_borrower_data.deleteStudentRecord(record_number, book_quantity, book_name);
+                            delete_borrower_data.deleteStudentRecord(record_number, book_quantity, book_name, transaction_id);
                         }
                     }
                 }
