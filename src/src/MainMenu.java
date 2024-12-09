@@ -75,7 +75,7 @@ public class MainMenu extends JFrame
         search_container.setMaximumSize(new Dimension((int) (frame_width * 0.46), 45));
         search_container.setOpaque(false);
 
-        JTextField search_bar = text_field_component.textFieldPanel("Search Bar");
+        JTextField search_bar = text_field_component.textFieldPanel("Search Book Title");
         search_bar.setPreferredSize(new Dimension((int) (frame_width * 0.45), 45)); // Set width and height
         search_bar.setMaximumSize(new Dimension((int) (frame_width * 0.45), 45));
         search_bar.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -93,8 +93,35 @@ public class MainMenu extends JFrame
 
         search_button.addActionListener(e ->
                 {
-                    System.out.println("Search Bar Text: " + search_bar.getText());
-                    System.out.println("User name: " + user_name);
+                    SearchReturnData searchReturnData = new SearchReturnData();
+
+                    if(searchReturnData.bookTitleExist(search_bar.getText().trim().toLowerCase()))
+                    {
+                        Object[] search_book_details =  searchReturnData.book_details(search_bar.getText().trim().toLowerCase());
+                        JOptionPane.showMessageDialog
+                                (
+                                        frame,
+                                        "Book ID: " + search_book_details[0] + "\n" +
+                                                "Book Title: " + search_book_details[1] + "\n" +
+                                                "Category: " + search_book_details[2] + "\n" +
+                                                "Quantity: " + search_book_details[3] + "\n" +
+                                                "ISBN: " + search_book_details[4] + "\n" +
+                                                "Author: " + search_book_details[5],
+                                        "Book Details",
+                                        JOptionPane.INFORMATION_MESSAGE
+                                );
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog
+                                (
+                                        frame,
+                                        "The book title is not found",
+                                        "Book Title is not Found",
+                                        JOptionPane.INFORMATION_MESSAGE
+                                );
+                    }
+
                 }
         );
 
@@ -491,7 +518,4 @@ public class MainMenu extends JFrame
         return button_corner;
     }
 
-//    public static void main(String[] args) {
-//        new MainMenu("WEw", 1);
-//    }
 }
