@@ -39,7 +39,11 @@ Link: https://drive.google.com/file/d/1bRGPtwV64nnJDxai8A2WKv5d0vAl2F7B/view?usp
 
 # Import SQL file 
 Make sure you need to create a database named "library_management_system"
-Link: 
+Link: https://drive.google.com/file/d/1jCXSEU7qWAY2pOJJSt3I8rLaK-56vcyG/view?usp=sharing
+
+# JAR file
+After creating the database and importing the table. you need to put a JAR file in the src directory where the ImageDirectory and src folder located.
+Link: https://drive.google.com/file/d/1S4a3hq-CCI37ROqBwN9CeWJ_iqzFyBUP/view?usp=sharing
 
 # Change root and password 
 After Setting the JAR file, you need to go in the DataBaseConnection.java file and change the root and password value into your database root name and the password
