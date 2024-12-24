@@ -37,7 +37,10 @@ This Library Management System is ideal for educational institutions or small li
 # Entity Relationship Diagram (ERD) 
 Link: https://drive.google.com/file/d/1bRGPtwV64nnJDxai8A2WKv5d0vAl2F7B/view?usp=sharing
 
-# Import SQL file (Make sure you need to create a database named "library_management_system")
+# Import SQL file 
+Make sure you need to create a database named "library_management_system"
+Link: 
 
-# After Setting the JAR file, you need to go in the DataBaseConnection.java file and change the root and password value into your database root name and the password
+# Change root and password 
+After Setting the JAR file, you need to go in the DataBaseConnection.java file and change the root and password value into your database root name and the password
 ![image alt](https://github.com/RiasGremoryHSDXD/LibraryManagementSystem/blob/1ee155ef276c8eefa2d49ab06a10ec15d91cb9d2/image.png)
