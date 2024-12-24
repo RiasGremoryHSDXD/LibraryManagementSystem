@@ -33,3 +33,18 @@ View Borrowed Books: List all books borrowed by the logged-in user, with due dat
 
 # Usage
 This Library Management System is ideal for educational institutions or small libraries. It allows administrators to manage books efficiently while enabling users to interact seamlessly with the library.
+
+# Entity Relationship Diagram (ERD) 
+Link: https://drive.google.com/file/d/1bRGPtwV64nnJDxai8A2WKv5d0vAl2F7B/view?usp=sharing
+
+# Import SQL file 
+Make sure you need to create a database named "library_management_system"  
+Link: https://drive.google.com/file/d/1jCXSEU7qWAY2pOJJSt3I8rLaK-56vcyG/view?usp=sharing
+
+# JAR file
+After creating the database and importing the table. you need to put a JAR file in the src directory where the ImageDirectory and src folder located.
+Link: https://drive.google.com/file/d/1S4a3hq-CCI37ROqBwN9CeWJ_iqzFyBUP/view?usp=sharing
+
+# Change root and password 
+After Setting the JAR file, you need to go in the DataBaseConnection.java file and change the root and password value into your database root name and the password
+![image alt](https://github.com/RiasGremoryHSDXD/LibraryManagementSystem/blob/1ee155ef276c8eefa2d49ab06a10ec15d91cb9d2/image.png)
