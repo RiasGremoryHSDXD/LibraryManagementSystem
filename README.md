@@ -33,3 +33,9 @@ View Borrowed Books: List all books borrowed by the logged-in user, with due dat
 
 # Usage
 This Library Management System is ideal for educational institutions or small libraries. It allows administrators to manage books efficiently while enabling users to interact seamlessly with the library.
+
+# Entity Relationship Diagram (ERD) 
+Link: https://drive.google.com/file/d/1bRGPtwV64nnJDxai8A2WKv5d0vAl2F7B/view?usp=sharing
+
+# Import SQL file (Make sure you need to create a database named "library_management_system")
+
