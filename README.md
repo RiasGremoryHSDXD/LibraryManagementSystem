@@ -38,7 +38,7 @@ This Library Management System is ideal for educational institutions or small li
 Link: https://drive.google.com/file/d/1bRGPtwV64nnJDxai8A2WKv5d0vAl2F7B/view?usp=sharing
 
 # Import SQL file 
-Make sure you need to create a database named "library_management_system"
+Make sure you need to create a database named "library_management_system"  
 Link: https://drive.google.com/file/d/1jCXSEU7qWAY2pOJJSt3I8rLaK-56vcyG/view?usp=sharing
 
 # JAR file
